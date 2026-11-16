@@ -21,9 +21,12 @@ def create_app(config_name=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config[config_name])
 
-    # Ensure instance and upload folders exist
-    os.makedirs(app.instance_path, exist_ok=True)
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    # Ensure folders exist — silently skip on read-only filesystems (e.g. Vercel)
+    for folder in [app.instance_path, app.config['UPLOAD_FOLDER']]:
+        try:
+            os.makedirs(folder, exist_ok=True)
+        except OSError:
+            pass
 
     # Init extensions
     db.init_app(app)

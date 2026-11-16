@@ -13,7 +13,8 @@ class Config:
     WTF_CSRF_TIME_LIMIT = 3600
 
     # Upload settings
-    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
+    # On Vercel (read-only fs), use /tmp which is writable
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', '/tmp/uploads' if os.environ.get('VERCEL') else os.path.join(BASE_DIR, 'uploads'))
     MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5 MB
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
