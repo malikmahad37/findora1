@@ -76,12 +76,19 @@ def create_app(config_name=None):
     def inject_globals():
         from app.models import Category, Notification
         from flask_login import current_user
-        categories = Category.query.filter_by(is_active=True).order_by(Category.name).all()
+        from sqlalchemy.exc import OperationalError
+        try:
+            categories = Category.query.filter_by(is_active=True).order_by(Category.name).all()
+        except OperationalError:
+            categories = []
         unread_count = 0
         if current_user.is_authenticated:
-            unread_count = Notification.query.filter_by(
-                user_id=current_user.id, is_read=False
-            ).count()
+            try:
+                unread_count = Notification.query.filter_by(
+                    user_id=current_user.id, is_read=False
+                ).count()
+            except OperationalError:
+                unread_count = 0
         return dict(categories=categories, unread_notif_count=unread_count)
 
     return app
