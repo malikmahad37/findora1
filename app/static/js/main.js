@@ -526,6 +526,71 @@ document.addEventListener('DOMContentLoaded', function () {
       }, { passive: true });
     });
   }
+
+  // ─────────────────────────────────────────────
+  //  FORM SUBMIT LOADING STATE & DOUBLE-SUBMIT PREVENTION
+  // ─────────────────────────────────────────────
+  document.querySelectorAll('form').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      // Prevent duplicate submits
+      if (form.getAttribute('data-submitting') === 'true') {
+        e.preventDefault();
+        return false;
+      }
+
+      // Check standard HTML5 validation
+      if (typeof form.checkValidity === 'function' && !form.checkValidity()) {
+        return; // Allow native validation tooltips to fire
+      }
+
+      var submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+      if (!submitBtn) return;
+
+      // Check if this form has file uploads or is item posting/editing
+      var hasFile = form.querySelector('input[type="file"]') !== null;
+      var isItemForm = form.classList.contains('item-upload-form') ||
+                       document.getElementById('title') !== null ||
+                       document.getElementById('item_type') !== null ||
+                       window.location.pathname.indexOf('/lost/new') !== -1 ||
+                       window.location.pathname.indexOf('/found/new') !== -1 ||
+                       window.location.pathname.indexOf('/edit') !== -1;
+
+      // Set submitting flag immediately
+      form.setAttribute('data-submitting', 'true');
+      submitBtn.classList.add('btn-loading');
+
+      var loadingText = 'Submitting...';
+      if (hasFile || isItemForm) {
+        loadingText = 'Uploading & Publishing... Please wait';
+      }
+
+      // Update button content with spinner
+      submitBtn.innerHTML = '<span class="spinner-icon"></span> <span>' + loadingText + '</span>';
+
+      // For item uploads, show prominent progress overlay
+      if (hasFile || isItemForm) {
+        var overlay = document.getElementById('cf-upload-overlay');
+        if (!overlay) {
+          overlay = document.createElement('div');
+          overlay.id = 'cf-upload-overlay';
+          overlay.className = 'cf-upload-overlay';
+          overlay.innerHTML =
+            '<div class="cf-upload-card">' +
+              '<div class="cf-upload-spinner"></div>' +
+              '<h4>Uploading Your Item...</h4>' +
+              '<p>Please wait while your post and photos are safely uploaded to Findora. Do not refresh or close this page.</p>' +
+            '</div>';
+          document.body.appendChild(overlay);
+        }
+        overlay.classList.add('active');
+      }
+
+      // Disable button after tick to guarantee form submit event fires cleanly
+      setTimeout(function () {
+        submitBtn.disabled = true;
+      }, 20);
+    });
+  });
 });
 
 // ─────────────────────────────────────────────

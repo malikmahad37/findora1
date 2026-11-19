@@ -2138,3 +2138,100 @@ footer {
 .d-flex { display: flex; } .flex-wrap { flex-wrap: wrap; } .align-center { align-items: center; } .justify-between { justify-content: space-between; }
 .w-100 { width: 100%; }
 .hidden { display: none !important; }
+
+/* ---------- Upload & Form Submission Loading State ---------- */
+.btn-loading {
+  position: relative !important;
+  pointer-events: none !important;
+  opacity: 0.85 !important;
+  cursor: not-allowed !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.6rem !important;
+}
+
+.spinner-icon {
+  display: inline-block;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  animation: cf-spin 0.75s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes cf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cf-upload-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.cf-upload-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.cf-upload-card {
+  background: var(--bg-card, #ffffff);
+  color: var(--text-primary, #0f172a);
+  border-radius: 18px;
+  padding: 2.25rem 2rem;
+  max-width: 440px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-color, #e2e8f0);
+  animation: cf-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cf-pop {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.cf-upload-spinner {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 1.25rem;
+  border: 4px solid var(--border-color, #e2e8f0);
+  border-top-color: var(--primary, #2563eb);
+  border-radius: 50%;
+  animation: cf-spin 0.8s linear infinite;
+}
+
+.cf-upload-card h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+.cf-upload-card p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-secondary, #475569);
+  line-height: 1.55;
+}
