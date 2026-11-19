@@ -47,20 +47,27 @@ def save_uploaded_file(file, subfolder='items'):
         try:
             file_bytes = file.read()
             content_type = f"image/{ext}" if ext != 'jpg' else 'image/jpeg'
-            supabase.storage.from_(SUPABASE_BUCKET).upload(
+            result = supabase.storage.from_(SUPABASE_BUCKET).upload(
                 path=storage_path,
                 file=file_bytes,
                 file_options={"content-type": content_type}
             )
             # Return public URL
             public_url = supabase.storage.from_(SUPABASE_BUCKET).get_public_url(storage_path)
+            import sys
+            print(f"[IMG_UPLOAD] Supabase OK: {public_url}", file=sys.stdout)
             return public_url
         except Exception as e:
+            import sys
+            print(f"[IMG_UPLOAD] Supabase FAILED: {type(e).__name__}: {e}", file=sys.stderr)
             # Reset file pointer if Supabase upload failed
             try:
                 file.seek(0)
             except Exception:
                 pass
+    else:
+        import sys
+        print("[IMG_UPLOAD] No Supabase client — SUPABASE_URL/KEY missing?", file=sys.stderr)
 
     # Fallback: save to local/tmp filesystem
     try:
