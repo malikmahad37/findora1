@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request
 from app import db
-from app.models import Item, Category, LocationCountry, User
+from app.models import Item, Category, LocationCountry, LocationCity, User
 
 main_bp = Blueprint('main', __name__)
 
@@ -15,6 +15,10 @@ def index():
     total_users = User.query.filter_by(is_active=True).count()
 
     categories = Category.query.order_by(Category.name).all()
+
+    # Major cities in Pakistan for quick browsing
+    major_city_ids = [1, 61, 173, 3, 2, 96, 5, 134]
+    popular_cities = LocationCity.query.filter(LocationCity.id.in_(major_city_ids)).order_by(LocationCity.name).all()
 
     recent_items = (
         Item.query
@@ -31,6 +35,7 @@ def index():
         total_resolved=total_resolved,
         total_users=total_users,
         categories=categories,
+        popular_cities=popular_cities,
         recent_items=recent_items,
     )
 
