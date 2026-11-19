@@ -8,8 +8,8 @@
     <div class="card" style="box-shadow: var(--shadow-md);">
       <div class="card-header" style="border-left: 5px solid {% if item_type == 'lost' %}var(--lost-color){% else %}var(--found-color){% endif %};">
         <div>
-          <h2>{% if item_type == 'lost' %} Report a Lost Item{% else %} Report a Found Item{% endif %}</h2>
-          <p>{% if item_type == 'lost' %}Provide accurate details so our rule-based matching engine can alert you when a match is found.{% else %}Help someone recover their lost belonging. Only enter details you want visible publicly.{% endif %}</p>
+          <h2>{% if item_type == 'lost' %}Report a Lost Item{% else %}Report a Found Item{% endif %}</h2>
+          <p>{% if item_type == 'lost' %}Tell the community what you lost. Clear details, location, and photos make it easier for finders to recognize your item.{% else %}Thank you for helping someone recover their belonging. Fill in basic details below to connect with the owner.{% endif %}</p>
         </div>
         <span class="badge-status badge-{{ item_type }}" style="font-size: 0.85rem; padding: 0.35rem 0.8rem;">
           {{ item_type|upper }}
@@ -74,10 +74,10 @@
             </div>
           </div>
 
-          <!-- Dynamic Hierarchical Location -->
+          <!-- Location Details -->
           <div style="background: var(--bg-tertiary); padding: 1.25rem; border-radius: var(--border-radius); margin: 1.5rem 0; border: 1px solid var(--border-color);">
-            <h4 style="margin-bottom: 0.25rem;"> Location Details</h4>
-            <p style="font-size: 0.85rem; margin-bottom: 1rem;">Select dynamic cascading location to enable geographic smart matching.</p>
+            <h4 style="margin-bottom: 0.25rem;">📍 Where did this happen?</h4>
+            <p style="font-size: 0.85rem; margin-bottom: 1rem; color: var(--text-secondary);">Select the province, city, and campus or area where the item was lost or found.</p>
 
             <div class="form-grid">
               <div class="form-group">
@@ -109,13 +109,13 @@
             </div>
           </div>
 
-          <!-- Private Identifying Details -->
+          <!-- Private Verification Details -->
           <div class="form-group">
             <label for="identifying_details">
-              Identifying Marks & Verification Details
-              <span class="text-muted" style="font-weight: 400;">({% if item_type == 'found' %}Keep secret details out of public sight if you want claimants to verify them!{% else %}Specify unique signs to verify ownership.{% endif %})</span>
+              Private Ownership Clue (Optional)
+              <span class="text-muted" style="font-weight: 400;">— {% if item_type == 'found' %}Keep unique secret marks private so you can ask claimants to confirm them.{% else %}Describe unique marks, serial numbers, or stickers to verify your ownership.{% endif %}</span>
             </label>
-            {{ form.identifying_details(class="form-control", rows="2", placeholder="e.g. Small scratch on bottom right corner, blue sticker on lid, contains student card inside...", id="identifying_details") }}
+            {{ form.identifying_details(class="form-control", rows="2", placeholder="e.g. Wallpaper photo of cat on lockscreen, small scratch on lower right corner, blue keychain...", id="identifying_details") }}
           </div>
 
           <!-- Image Upload with Drag & Drop Preview -->

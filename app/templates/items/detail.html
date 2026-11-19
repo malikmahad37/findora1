@@ -147,12 +147,12 @@
                 <p>{{ item.color or 'Not specified' }}</p>
               </div>
               <div class="detail-meta-item" style="grid-column: span 2;">
-                <label>Location Hierarchy</label>
+                <label>Location</label>
                 <p>{{ item.full_location }}</p>
               </div>
               {% if item.location_text %}
                 <div class="detail-meta-item" style="grid-column: span 2;">
-                  <label>Specific Landmark / Spot</label>
+                  <label>Specific Spot / Landmark</label>
                   <p>{{ item.location_text }}</p>
                 </div>
               {% endif %}
@@ -178,17 +178,17 @@
           </div>
         </div>
 
-        <!-- Smart Matching Results (Shown to owner) -->
+        <!-- Similar Potential Matches (Shown to owner) -->
         {% if is_owner %}
           <div class="card" style="margin-bottom: 1.5rem; border: 1.5px solid #fdba74;">
             <div class="card-header" style="background: #fff7ed;">
               <div>
-                <h3 style="color: #9a3412;">Rule-Based Smart Matching</h3>
+                <h3 style="color: #9a3412;">Possible Matches Found</h3>
                 <p style="color: #c2410c; font-size: 0.85rem; margin-bottom: 0;">
-                  Automated similarity analysis against opposite active reports
+                  Items posted recently in your area that might match your report
                 </p>
               </div>
-              <span class="badge" style="position: static; background: #ea580c;">{{ matches|length }} candidate{{ 's' if matches|length != 1 else '' }}</span>
+              <span class="badge" style="position: static; background: #ea580c;">{{ matches|length }} match{{ 'es' if matches|length != 1 else '' }}</span>
             </div>
 
             <div class="card-body">

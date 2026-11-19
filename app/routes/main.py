@@ -14,6 +14,8 @@ def index():
     ).count()
     total_users = User.query.filter_by(is_active=True).count()
 
+    categories = Category.query.order_by(Category.name).all()
+
     recent_items = (
         Item.query
         .filter(Item.status.in_(('active', 'possible_match', 'claim_pending')))
@@ -28,6 +30,7 @@ def index():
         total_found=total_found,
         total_resolved=total_resolved,
         total_users=total_users,
+        categories=categories,
         recent_items=recent_items,
     )
 
