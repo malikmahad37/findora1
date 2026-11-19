@@ -29,6 +29,53 @@ def _get_supabase_client():
     return None
 
 
+def _upload_to_supabase(file_bytes, storage_path, content_type):
+    """Upload directly to Supabase Storage via REST API, fallback to client library."""
+    url = os.environ.get('SUPABASE_URL', '').rstrip('/')
+    key = os.environ.get('SUPABASE_SERVICE_KEY') or os.environ.get('SUPABASE_KEY', '')
+    if not url or not key:
+        return None
+
+    # Method 1: Standard library REST request (fast, no package version quirks)
+    try:
+        import urllib.request
+        upload_url = f"{url}/storage/v1/object/{SUPABASE_BUCKET}/{storage_path}"
+        req = urllib.request.Request(
+            upload_url,
+            data=file_bytes,
+            headers={
+                'Authorization': f'Bearer {key}',
+                'apikey': key,
+                'Content-Type': content_type,
+                'x-upsert': 'true'
+            },
+            method='POST'
+        )
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            if resp.status in (200, 201):
+                public_url = f"{url}/storage/v1/object/public/{SUPABASE_BUCKET}/{storage_path}"
+                return public_url
+    except Exception as e:
+        import sys
+        print(f"[IMG_UPLOAD] REST upload error: {e}", file=sys.stderr)
+
+    # Method 2: Supabase Python SDK client fallback
+    try:
+        supabase = _get_supabase_client()
+        if supabase:
+            supabase.storage.from_(SUPABASE_BUCKET).upload(
+                path=storage_path,
+                file=file_bytes,
+                file_options={"content-type": content_type}
+            )
+            return supabase.storage.from_(SUPABASE_BUCKET).get_public_url(storage_path)
+    except Exception as e:
+        import sys
+        print(f"[IMG_UPLOAD] Supabase SDK error: {e}", file=sys.stderr)
+
+    return None
+
+
 def save_uploaded_file(file, subfolder='items'):
     """
     Save uploaded file to Supabase Storage (preferred) or local /tmp fallback.
@@ -43,35 +90,22 @@ def save_uploaded_file(file, subfolder='items'):
     unique_name = f"{uuid.uuid4().hex}.{ext}"
     storage_path = f"{subfolder}/{unique_name}"
 
-    # Try Supabase Storage first
-    supabase = _get_supabase_client()
-    if supabase:
-        try:
-            file_bytes = file.read()
-            content_type = f"image/{ext}" if ext != 'jpg' else 'image/jpeg'
-            result = supabase.storage.from_(SUPABASE_BUCKET).upload(
-                path=storage_path,
-                file=file_bytes,
-                file_options={"content-type": content_type}
-            )
-            # Return public URL
-            public_url = supabase.storage.from_(SUPABASE_BUCKET).get_public_url(storage_path)
-            import sys
-            print(f"[IMG_UPLOAD] Supabase OK: {public_url}", file=sys.stdout)
+    try:
+        file_bytes = file.read()
+        content_type = f"image/{ext}" if ext != 'jpg' else 'image/jpeg'
+        public_url = _upload_to_supabase(file_bytes, storage_path, content_type)
+        if public_url:
             return public_url
-        except Exception as e:
-            import sys
-            print(f"[IMG_UPLOAD] Supabase FAILED: {type(e).__name__}: {e}", file=sys.stderr)
-            # Reset file pointer if Supabase upload failed
-            try:
-                file.seek(0)
-            except Exception:
-                pass
-    else:
+    except Exception as e:
         import sys
-        print("[IMG_UPLOAD] No Supabase client — SUPABASE_URL/KEY missing?", file=sys.stderr)
+        print(f"[IMG_UPLOAD] Upload failed: {e}", file=sys.stderr)
 
     # Fallback: save to local/tmp filesystem
+    try:
+        file.seek(0)
+    except Exception:
+        pass
+
     try:
         upload_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], subfolder)
         os.makedirs(upload_dir, exist_ok=True)

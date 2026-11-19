@@ -32,3 +32,4 @@ uploads/*
 Thumbs.db
 .vercel
 .env*
+create_tables.py
