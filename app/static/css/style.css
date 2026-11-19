@@ -2780,3 +2780,159 @@ footer {
 @media (max-width: 640px) {
   .container { padding: 0 1rem; }
 }
+
+
+/* ============================================================
+   HERO CTA BUTTONS — Big, Bold, Press-Me Feeling
+   ============================================================ */
+.hero-cta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.hero-cta-btn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.4rem;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ripple layer on press */
+.hero-cta-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.12);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.hero-cta-btn:active::after {
+  opacity: 1;
+}
+
+/* Lost CTA — Crimson filled */
+.cta-lost {
+  background: #be123c;
+  border: 2px solid #be123c;
+  box-shadow: 0 4px 16px rgba(190, 18, 60, 0.28);
+  color: #fff;
+}
+.cta-lost:hover {
+  background: #9f1239;
+  border-color: #9f1239;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(190, 18, 60, 0.38);
+  color: #fff;
+}
+.cta-lost:active {
+  transform: translateY(0px) scale(0.99);
+  box-shadow: 0 2px 8px rgba(190, 18, 60, 0.3);
+}
+
+/* Found CTA — Emerald filled */
+.cta-found {
+  background: #047857;
+  border: 2px solid #047857;
+  box-shadow: 0 4px 16px rgba(4, 120, 87, 0.28);
+  color: #fff;
+}
+.cta-found:hover {
+  background: #065f46;
+  border-color: #065f46;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(4, 120, 87, 0.38);
+  color: #fff;
+}
+.cta-found:active {
+  transform: translateY(0px) scale(0.99);
+  box-shadow: 0 2px 8px rgba(4, 120, 87, 0.3);
+}
+
+/* Icon circle inside CTA */
+.cta-btn-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+  transition: background 0.2s;
+}
+.hero-cta-btn:hover .cta-btn-icon {
+  background: rgba(255, 255, 255, 0.26);
+}
+
+/* Text body */
+.cta-btn-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+.cta-btn-label {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.cta-btn-sub {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 500;
+}
+
+/* Arrow */
+.cta-btn-arrow {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.7);
+  transition: transform 0.2s, color 0.2s;
+}
+.hero-cta-btn:hover .cta-btn-arrow {
+  transform: translateX(4px);
+  color: #fff;
+}
+
+/* Mobile: full width, slightly smaller */
+@media (max-width: 640px) {
+  .hero-cta-btn {
+    padding: 0.95rem 1.1rem;
+  }
+  .cta-btn-label { font-size: 0.95rem; }
+  .cta-btn-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .cta-lost {
+  background: #be123c;
+  border-color: #be123c;
+  box-shadow: 0 4px 18px rgba(190, 18, 60, 0.4);
+}
+[data-theme="dark"] .cta-lost:hover {
+  background: #9f1239;
+  box-shadow: 0 8px 24px rgba(190, 18, 60, 0.5);
+}
+[data-theme="dark"] .cta-found {
+  background: #047857;
+  border-color: #047857;
+  box-shadow: 0 4px 18px rgba(4, 120, 87, 0.4);
+}
+[data-theme="dark"] .cta-found:hover {
+  background: #065f46;
+  box-shadow: 0 8px 24px rgba(4, 120, 87, 0.5);
+}
