@@ -8,16 +8,16 @@
   <div class="container">
     <div class="hero-clean-content">
       <div class="hero-clean-tag">
-        <span>📍 Pakistan's Community Lost & Found</span>
+        <span>Pakistan Community Directory</span>
       </div>
 
       <h1 class="hero-clean-title">
-        Lost something? Found something?<br>
-        Let's get it back to its owner.
+        Find what was lost.<br>
+        Return what was found.
       </h1>
 
       <p class="hero-clean-sub">
-        Findora connects students, commuters, and citizens across Pakistan to report lost belongings, find items, and coordinate safe returns. Completely free for everyone.
+        A community-driven directory helping students, commuters, and citizens across Pakistan safely report and recover misplaced belongings. Free for everyone.
       </p>
 
       <!-- Main Search Bar -->
@@ -29,34 +29,45 @@
           </svg>
           <input type="text" name="q" placeholder="Search by item name, brand, or location (e.g. Student Card FAST, Honda Keys, Black Wallet)..." required>
         </div>
-        <button type="submit" class="btn btn-primary btn-search-submit">Search Items</button>
+        <button type="submit" class="btn btn-primary btn-search-submit">Search</button>
       </form>
 
       <!-- Quick Search Suggestions -->
       <div class="hero-quick-tags">
-        <span class="quick-tags-label">Common items:</span>
-        <a href="{{ url_for('main.search', q='Student Card') }}" class="tag-chip">💳 Student Cards</a>
-        <a href="{{ url_for('main.search', q='Keys') }}" class="tag-chip">🔑 Keys</a>
-        <a href="{{ url_for('main.search', q='Wallet') }}" class="tag-chip">👛 Wallets</a>
-        <a href="{{ url_for('main.search', q='Phone') }}" class="tag-chip">📱 Mobile Phones</a>
-        <a href="{{ url_for('main.search', q='Bag') }}" class="tag-chip">🎒 Bags & Backpacks</a>
-        <a href="{{ url_for('main.search', q='CNIC') }}" class="tag-chip">🪪 CNIC</a>
+        <span class="quick-tags-label">Common searches:</span>
+        <a href="{{ url_for('main.search', q='Student Card') }}" class="tag-chip">Student Cards</a>
+        <a href="{{ url_for('main.search', q='Keys') }}" class="tag-chip">Keys</a>
+        <a href="{{ url_for('main.search', q='Wallet') }}" class="tag-chip">Wallets</a>
+        <a href="{{ url_for('main.search', q='Phone') }}" class="tag-chip">Mobile Phones</a>
+        <a href="{{ url_for('main.search', q='Bag') }}" class="tag-chip">Bags & Backpacks</a>
+        <a href="{{ url_for('main.search', q='CNIC') }}" class="tag-chip">CNIC & IDs</a>
       </div>
 
       <!-- Action Buttons -->
       <div class="hero-clean-actions">
         <a href="{{ url_for('items.post_lost') }}" class="btn-action btn-action-lost">
-          <span class="action-icon">❗</span>
+          <div class="action-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="20" height="20">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
           <div>
-            <strong>I Lost Something</strong>
-            <small>Post details so finders can reach you</small>
+            <strong>Report a Lost Item</strong>
+            <small>Publish details so finders can notify you</small>
           </div>
         </a>
         <a href="{{ url_for('items.post_found') }}" class="btn-action btn-action-found">
-          <span class="action-icon">✓</span>
+          <div class="action-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="20" height="20">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
           <div>
-            <strong>I Found Something</strong>
-            <small>Help return it to the rightful owner</small>
+            <strong>Report a Found Item</strong>
+            <small>Help return a belonging to its rightful owner</small>
           </div>
         </a>
       </div>
@@ -85,12 +96,12 @@
 {% endif %}
 
 <!-- Recent Items Section -->
-<section class="page-content" style="padding-top: 2rem;">
+<section class="page-content" style="padding-top: 2.25rem;">
   <div class="container">
     <div class="page-header" style="margin-bottom: 1.5rem;">
       <div>
         <h2>Recently Reported Items</h2>
-        <p>Recent posts from campuses, public transport, and cities across Pakistan</p>
+        <p>Latest listings from universities, public transit, and cities across Pakistan</p>
       </div>
       <a href="{{ url_for('main.browse') }}" class="btn btn-secondary">View All Items →</a>
     </div>
@@ -103,7 +114,14 @@
               {% if item.image_path %}
                 <img src="{{ item.image_path if item.image_path.startswith('http') else url_for('static', filename='uploads/' ~ item.image_path) }}" alt="{{ item.title }}" loading="lazy" onerror="this.style.display='none';">
               {% else %}
-                <span style="font-size: 2.2rem;">{{ item.category.icon if item.category else '📦' }}</span>
+                <div class="item-card-no-photo">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28" style="opacity: 0.5;">
+                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                  <span>{{ item.category.name if item.category else 'No Photo' }}</span>
+                </div>
               {% endif %}
             </div>
             <div class="item-card-body">
@@ -114,7 +132,13 @@
               <h3 class="item-card-title" title="{{ item.title }}">{{ item.title }}</h3>
               <p class="item-card-desc">{{ item.description or 'No additional details provided.' }}</p>
               <div class="item-card-meta">
-                <span>📍 {{ item.city.name if item.city else (item.location_text or 'Pakistan') }}</span>
+                <span class="meta-location">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" style="opacity: 0.65; margin-right: 4px; vertical-align: -1px;">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  {{ item.city.name if item.city else (item.location_text or 'Pakistan') }}
+                </span>
                 {% if item.brand %}<span>• Brand: {{ item.brand }}</span>{% endif %}
                 {% if item.color %}<span>• Color: {{ item.color }}</span>{% endif %}
               </div>
@@ -128,7 +152,12 @@
       </div>
     {% else %}
       <div class="card empty-state-box">
-        <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🔍</div>
+        <div style="width: 48px; height: 48px; margin: 0 auto 0.75rem; border-radius: 50%; background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24" style="color: var(--text-muted);">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </div>
         <h3>No items reported yet</h3>
         <p style="color: var(--text-secondary); max-width: 440px; margin: 0 auto 1.5rem; font-size: 0.9rem;">
           Be the first to report a lost or found belonging in your city or university campus.
@@ -143,36 +172,38 @@
 </section>
 
 <!-- Safety Guidelines Box -->
-<section style="padding: 2.5rem 0; background: var(--bg-tertiary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+<section style="padding: 2.75rem 0; background: var(--bg-tertiary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
   <div class="container">
     <div style="max-width: 860px; margin: 0 auto;">
-      <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-        <span style="font-size: 1.5rem;">🛡️</span>
-        <h3 style="margin: 0; font-size: 1.25rem;">Safety Guidelines for Returning Belongings</h3>
+      <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="color: var(--primary);">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        <h3 style="margin: 0; font-size: 1.2rem; font-weight: 700;">Safety Guidelines for Handing Over Items</h3>
       </div>
-      <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 1.25rem;">
-        Please follow these common-sense safety practices when meeting to return or claim items:
+      <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">
+        Follow these practical precautions when returning or claiming personal belongings:
       </p>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
         <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
-          <strong style="display: block; margin-bottom: 0.35rem; color: var(--text-primary);">1. Meet in daylight in public</strong>
+          <strong style="display: block; margin-bottom: 0.35rem; color: var(--text-primary); font-size: 0.95rem;">1. Meet in busy public places</strong>
           <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
-            Choose busy locations like campus main gates, library entrances, metro stations, or popular cafes. Never meet in private residences or secluded spots.
+            Choose locations with people around: campus library desks, department offices, metro stations, or well-lit cafes. Avoid meeting in secluded areas.
           </p>
         </div>
 
         <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
-          <strong style="display: block; margin-bottom: 0.35rem; color: var(--text-primary);">2. Verify ownership details</strong>
+          <strong style="display: block; margin-bottom: 0.35rem; color: var(--text-primary); font-size: 0.95rem;">2. Check private verification details</strong>
           <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
-            Ask the claimant for a private detail only the owner knows (e.g. lockscreen photo, scratches, serial number, keychain design) before handing it over.
+            Ask the claimant to confirm a hidden detail (lockscreen picture, sticker, scratch, or wallet card name) before handing over the item.
           </p>
         </div>
 
         <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
-          <strong style="display: block; margin-bottom: 0.35rem; color: var(--text-primary);">3. Never send money upfront</strong>
+          <strong style="display: block; margin-bottom: 0.35rem; color: var(--text-primary); font-size: 0.95rem;">3. Never transfer money in advance</strong>
           <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
-            Findora is 100% free. Never transfer "courier fees" or rewards to strangers through Easypaisa, JazzCash, or bank transfer in advance.
+            Findora is completely free. Beware of anyone requesting advance "shipping fees", "delivery charges", or rewards via Easypaisa or bank transfer.
           </p>
         </div>
       </div>
