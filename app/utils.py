@@ -15,15 +15,17 @@ def allowed_file(filename):
 
 
 def _get_supabase_client():
-    """Return a Supabase client if credentials are available."""
+    """Return a Supabase client using service key (preferred) or anon key."""
     try:
         from supabase import create_client
         url = os.environ.get('SUPABASE_URL', '')
-        key = os.environ.get('SUPABASE_KEY', '')
+        # Prefer service role key (bypasses RLS), fallback to anon key
+        key = os.environ.get('SUPABASE_SERVICE_KEY') or os.environ.get('SUPABASE_KEY', '')
         if url and key:
             return create_client(url, key)
-    except Exception:
-        pass
+    except Exception as e:
+        import sys
+        print(f"[SUPABASE] Client init failed: {e}", file=sys.stderr)
     return None
 
 
