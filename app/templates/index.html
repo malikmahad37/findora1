@@ -20,7 +20,7 @@
       <div class="hero-premium-left">
         <div class="hero-badge">
           <span class="hero-badge-pulse"></span>
-          <span>Next-Gen Smart Lost & Found Network</span>
+          <span>Pakistan's Trusted Lost & Found Network</span>
         </div>
 
         <h1 class="hero-premium-title">
@@ -29,7 +29,7 @@
         </h1>
 
         <p class="hero-premium-sub">
-          A smart, verified recovery network connecting universities, cities, and workplaces across Pakistan. Powered by real-time similarity matching and secure claim verification.
+          Connecting people across Pakistan to report lost belongings, find them, and return them to their rightful owners. Free for everyone — students, families, and workplaces.
         </p>
 
         <!-- Quick Live Search Bar in Hero -->
@@ -135,7 +135,7 @@
           <div class="item-card">
             <div class="item-card-img">
               {% if item.image_path %}
-                <img src="{{ url_for('static', filename='uploads/' ~ item.image_path) }}" alt="{{ item.title }}" loading="lazy">
+                <img src="{{ item.image_path if item.image_path.startswith('http') else url_for('static', filename='uploads/' ~ item.image_path) }}" alt="{{ item.title }}" loading="lazy">
               {% else %}
                 <span>{{ item.category.icon if item.category else '' }}</span>
               {% endif %}

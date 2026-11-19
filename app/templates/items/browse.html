@@ -87,7 +87,7 @@
           <div class="item-card">
             <div class="item-card-img">
               {% if item.image_path %}
-                <img src="{{ url_for('static', filename='uploads/' ~ item.image_path) }}" alt="{{ item.title }}" loading="lazy">
+                <img src="{{ item.image_path if item.image_path.startswith('http') else url_for('static', filename='uploads/' ~ item.image_path) }}" alt="{{ item.title }}" loading="lazy">
               {% else %}
                 <span>{{ item.category.icon if item.category else '' }}</span>
               {% endif %}

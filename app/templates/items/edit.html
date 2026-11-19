@@ -101,7 +101,7 @@
             <label>Image</label>
             {% if item.image_path %}
               <div style="margin-bottom: 0.75rem;">
-                <img src="{{ url_for('static', filename='uploads/' ~ item.image_path) }}" alt="{{ item.title }}" style="max-height: 120px; border-radius: 8px;">
+                <img src="{{ item.image_path if item.image_path.startswith('http') else url_for('static', filename='uploads/' ~ item.image_path) }}" alt="{{ item.title }}" style="max-height: 120px; border-radius: 8px;">
                 <p style="font-size: 0.8rem; color: var(--text-muted);">Current image. Upload below to replace.</p>
               </div>
             {% endif %}

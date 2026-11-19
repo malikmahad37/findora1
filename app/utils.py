@@ -6,23 +6,70 @@ from werkzeug.utils import secure_filename
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
+# Supabase storage bucket name
+SUPABASE_BUCKET = 'item-images'
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def _get_supabase_client():
+    """Return a Supabase client if credentials are available."""
+    try:
+        from supabase import create_client
+        url = os.environ.get('SUPABASE_URL', '')
+        key = os.environ.get('SUPABASE_KEY', '')
+        if url and key:
+            return create_client(url, key)
+    except Exception:
+        pass
+    return None
+
+
 def save_uploaded_file(file, subfolder='items'):
-    """Saves an uploaded FileStorage object; returns relative path or None."""
+    """
+    Save uploaded file to Supabase Storage (preferred) or local /tmp fallback.
+    Returns a full public URL (Supabase) or relative path (local).
+    """
     if not file or file.filename == '':
         return None
     if not allowed_file(file.filename):
         return None
+
     ext = file.filename.rsplit('.', 1)[1].lower()
     unique_name = f"{uuid.uuid4().hex}.{ext}"
-    upload_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], subfolder)
-    os.makedirs(upload_dir, exist_ok=True)
-    file.save(os.path.join(upload_dir, unique_name))
-    return f"{subfolder}/{unique_name}"
+    storage_path = f"{subfolder}/{unique_name}"
+
+    # Try Supabase Storage first
+    supabase = _get_supabase_client()
+    if supabase:
+        try:
+            file_bytes = file.read()
+            content_type = f"image/{ext}" if ext != 'jpg' else 'image/jpeg'
+            supabase.storage.from_(SUPABASE_BUCKET).upload(
+                path=storage_path,
+                file=file_bytes,
+                file_options={"content-type": content_type}
+            )
+            # Return public URL
+            public_url = supabase.storage.from_(SUPABASE_BUCKET).get_public_url(storage_path)
+            return public_url
+        except Exception as e:
+            # Reset file pointer if Supabase upload failed
+            try:
+                file.seek(0)
+            except Exception:
+                pass
+
+    # Fallback: save to local/tmp filesystem
+    try:
+        upload_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], subfolder)
+        os.makedirs(upload_dir, exist_ok=True)
+        file.save(os.path.join(upload_dir, unique_name))
+        return storage_path  # relative path for local serving
+    except Exception:
+        return None
 
 
 def log_activity(action, details=None, user_id=None):

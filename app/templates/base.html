@@ -1,5 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+{# ── Global image URL helper ───────────────────────────────────────────────
+   Usage: {{ item_img(item.image_path) }}
+   If path starts with http(s):// it is a Supabase/CDN URL — use as-is.
+   Otherwise serve from local static/uploads/.
+──────────────────────────────────────────────────────────────────────────── #}
+{% macro item_img(path, alt='', css='') %}
+  {% if path %}
+    {% if path.startswith('http') %}
+      <img src="{{ path }}" alt="{{ alt }}" class="{{ css }}" loading="lazy">
+    {% else %}
+      <img src="{{ url_for('static', filename='uploads/' ~ path) }}" alt="{{ alt }}" class="{{ css }}" loading="lazy">
+    {% endif %}
+  {% endif %}
+{% endmacro %}
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -244,19 +258,19 @@
         </div>
 
         <div class="footer-links">
-          <h4>Technology</h4>
+          <h4>Contact & Support</h4>
           <ul>
-            <li><span style="font-size: 0.85rem; color: var(--text-muted);">Python Flask + ORM</span></li>
-            <li><span style="font-size: 0.85rem; color: var(--text-muted);">Supabase PostgreSQL</span></li>
-            <li><span style="font-size: 0.85rem; color: var(--text-muted);">Smart Match Scoring</span></li>
-            <li><span style="font-size: 0.85rem; color: var(--text-muted);">Secure Cloud Infrastructure</span></li>
+            <li><span style="font-size: 0.85rem; color: var(--text-muted);">Available 24/7 for all cities</span></li>
+            <li><span style="font-size: 0.85rem; color: var(--text-muted);">Free to use — no signup fee</span></li>
+            <li><span style="font-size: 0.85rem; color: var(--text-muted);">Safe & secure platform</span></li>
+            <li><span style="font-size: 0.85rem; color: var(--text-muted);">Pakistan-wide coverage</span></li>
           </ul>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <div>© 2026 FINDORA — Smart Lost & Found Management System. All rights reserved.</div>
-        <div>Tagline: <em>"Lost Something? Find It. Found Something? Return It."</em></div>
+        <div>© 2026 FINDORA — Pakistan's Lost & Found Network. All rights reserved.</div>
+        <div><em>"Lost Something? Find It. Found Something? Return It."</em></div>
       </div>
     </div>
   </footer>
@@ -265,3 +279,4 @@
   {% block extra_scripts %}{% endblock %}
 </body>
 </html>
+
